@@ -153,15 +153,15 @@ public class Stimulus {
 	
 	public void initializeTrialArrays() {
 		trialW = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
-		//trialWACompounds = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
+		trialWACompounds = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
 		
-		//randomTrialWA = new float[group.getNoOfPhases()][trials][totalStimuli];
-		//randomTrialWAUnique = new float[group.getNoOfPhases()][trials][totalStimuli];
+		randomTrialWA = new float[group.getNoOfPhases()][trials][totalStimuli];
+		randomTrialWAUnique = new float[group.getNoOfPhases()][trials][totalStimuli];
 		
 		orgTrialW = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
 
-		//trialWA = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
-		//orgTrialWA = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
+		trialWA = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
+		orgTrialWA = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
 		
 	}
 		
@@ -171,7 +171,7 @@ public class Stimulus {
 		//System.out.println("Error in " + place);
 	}
 	public float getRandomTrialWA(int phase, int trial, String otherName) {
-		if (false && getList()[0].getNames().contains(otherName) && (randomTrialWA)[phase].length > trial) {return randomTrialWA[phase][trial][getList()[0].getNames().indexOf(otherName)];}
+		if (getList()[0].getNames().contains(otherName) && (randomTrialWA)[phase].length > trial) {return randomTrialWA[phase][trial][getList()[0].getNames().indexOf(otherName)];}
 		else {
 			//printErr((ordered? "ordTrialW" : "trialAvgW") + " details: trial: " + trial + " name: " + getName() + " other: " + otherName);
 			return 0;
@@ -179,7 +179,7 @@ public class Stimulus {
 	}
 	
 	public float getRandomTrialWAUnique(int phase, int trial, String otherName) {
-		if (false &&getList()[0].getNames().contains(otherName)&& (randomTrialWA)[phase].length > trial) {return randomTrialWA[phase][trial][getList()[0].getNames().indexOf(otherName)];}
+		if (getList()[0].getNames().contains(otherName)&& (randomTrialWA)[phase].length > trial) {return randomTrialWA[phase][trial][getList()[0].getNames().indexOf(otherName)];}
 		else {
 			//printErr((ordered? "ordTrialW" : "trialAvgW") + " details: trial: " + trial + " name: " + getName() + " other: " + otherName);
 			return 0;
@@ -189,9 +189,10 @@ public class Stimulus {
 	
 	
 	public float getTrialWACompounds(int trialType,int phase, int trial, String otherName) {
-		if (false &&getList()[0].getNames().contains(otherName) && (trialWACompounds)[trialType][phase].length > trial) {return (trialWACompounds)[trialType][phase][trial][getList()[0].getNames().indexOf(otherName)];}
+		if (getList()[0].getNames().contains(otherName) && (trialWACompounds)[trialType][phase].length > trial) {return (trialWACompounds)[trialType][phase][trial][getList()[0].getNames().indexOf(otherName)];}
 		else {
 			//printErr((ordered? "ordTrialW" : "trialAvgW") + " details: trial: " + trial + " name: " + getName() + " other: " + otherName);
+			
 			return 0;
 		}
 	}
@@ -205,7 +206,7 @@ public class Stimulus {
 	}
 	
 	public float getTrialWA(int trialType,int phase, int trial, String otherName, boolean ordered) {
-		if (false &&getList()[0].getNames().contains(otherName) && (ordered? orgTrialWA : trialWA)[trialType][phase].length > trial) {return (ordered? orgTrialWA : trialWA)[trialType][phase][trial][getList()[0].getNames().indexOf(otherName)];}
+		if (getList()[0].getNames().contains(otherName) && (ordered? orgTrialWA : trialWA)[trialType][phase].length > trial) {return (ordered? orgTrialWA : trialWA)[trialType][phase][trial][getList()[0].getNames().indexOf(otherName)];}
 		else {
 			//printErr((ordered? "ordTrialWA" : "trialAvgWA") + " details: trial: " + trial + " name: " + getName() + " other: " + otherName);
 			return 0;
@@ -368,15 +369,15 @@ public class Stimulus {
 				else {
 					if (curT.contains(getName()) || isContext) {update = true;}
 				}
-				//if (update){randomTrialWA[currentPhase][randomTrialCount][i] += commonWa + (tempValues[i])/(currPhase.isRandom() ? (float)group.getModel().getCombinationNo() : 1f);}
-				//if (update){randomTrialWAUnique[currentPhase][randomTrialCount][i] += (tempValues[i])/(currPhase.isRandom() ? (float)group.getModel().getCombinationNo() : 1f);}
+				if (update){randomTrialWA[currentPhase][randomTrialCount][i] += commonWa + (tempValues[i])/(currPhase.isRandom() ? (float)group.getModel().getCombinationNo() : 1f);}
+				if (update){randomTrialWAUnique[currentPhase][randomTrialCount][i] += (tempValues[i])/(currPhase.isRandom() ? (float)group.getModel().getCombinationNo() : 1f);}
 				
-				//trialWA[group.getTrialTypeIndex(curT)+1][currentPhase][val][i] += tempValues[i]/(currPhase.isRandom() ? (float)group.getModel().getCombinationNo() : 1f);
-				//trialWACompounds[group.getTrialTypeIndex2(filtered)+1][currentPhase][val2][i] += tempValues[i]/(currPhase.isRandom() ? (float)group.getModel().getCombinationNo() : 1f);
+				trialWA[group.getTrialTypeIndex(curT)+1][currentPhase][val][i] += tempValues[i]/(currPhase.isRandom() ? (float)group.getModel().getCombinationNo() : 1f);
+				trialWACompounds[group.getTrialTypeIndex2(filtered)+1][currentPhase][val2][i] += tempValues[i]/(currPhase.isRandom() ? (float)group.getModel().getCombinationNo() : 1f);
 				
 			}
 		}
-		//trialWA[0][currentPhase][trialCount] = Arrays.copyOf(tempValues,totalStimuli);
+		trialWA[0][currentPhase][trialCount] = Arrays.copyOf(tempValues,totalStimuli);
 		
 
 		predictionSum = 0;
@@ -426,8 +427,8 @@ public class Stimulus {
 				tempValues[i] = 0;
 			}
 		}
-		//trialWA[0][currentPhase][trialCount] = Arrays.copyOf(tempValues,totalStimuli);
-		//trialWACompounds[0][currentPhase][trialCount] = Arrays.copyOf(tempValues,totalStimuli);
+		trialWA[0][currentPhase][trialCount] = Arrays.copyOf(tempValues,totalStimuli);
+		trialWACompounds[0][currentPhase][trialCount] = Arrays.copyOf(tempValues,totalStimuli);
 		averageAverageWeights = new float[totalStimuli];
 		averageAverageWeightsA = new float[totalStimuli];
 		averagePrediction[trialCount] = 0;
@@ -620,21 +621,21 @@ public class Stimulus {
 	}
 	
 	public void setTrialAverageWeightsA(int trialType,float[][] avgTW, int phase) {
-		/*trialWA[trialType][phase] = new float[avgTW.length][avgTW[0].length];
+		trialWA[trialType][phase] = new float[avgTW.length][avgTW[0].length];
 		for (int i = 0; i < avgTW.length; i++) {
 			for (int j = 0; j < avgTW[0].length; j++) {
 				trialWA[trialType][phase][i][j] = avgTW[i][j];
 			}
-		}*/
+		}
 	}
 	
 	public void setOrganizedTrialAverageWeightsA(int trialType, float[][] avgTW, int phase) {
-		/*orgTrialWA[trialType][phase] = new float[avgTW.length][avgTW[0].length];
+		orgTrialWA[trialType][phase] = new float[avgTW.length][avgTW[0].length];
 		for (int i = 0; i < avgTW.length; i++) {
 			for (int j = 0; j < avgTW[0].length; j++) {
 				orgTrialWA[trialType][phase][i][j] = avgTW[i][j];
 			}
-		}*/
+		}
 	}
 	
 	
@@ -791,14 +792,14 @@ public class Stimulus {
 			se.reset();
 		}
 		trialCount = 0;
-		//randomTrialWA =  new float[group.getNoOfPhases()][trials][totalStimuli];
-		//randomTrialWAUnique =  new float[group.getNoOfPhases()][trials][totalStimuli];
+		randomTrialWA =  new float[group.getNoOfPhases()][trials][totalStimuli];
+		randomTrialWAUnique =  new float[group.getNoOfPhases()][trials][totalStimuli];
 		trialW = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
 		orgTrialW = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
-		//trialWACompounds = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
+		trialWACompounds = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
 		
-		//trialWA = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
-		//orgTrialWA = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
+		trialWA = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
+		orgTrialWA = new float[group.getNoTrialTypes()+1][group.getNoOfPhases()][trials][totalStimuli];
 		averageAverageWeights = new float[totalStimuli];
 		averageAverageWeightsA = new float[totalStimuli];
 		averagePrediction = new float[trials];

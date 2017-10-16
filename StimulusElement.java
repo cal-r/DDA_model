@@ -8,146 +8,88 @@ import simulator.configurables.ContextConfig.Context;
 import simulator.util.USNames;
 
 public class StimulusElement {
-	//default values usually updated later
-	//element name
 	private String name;
-	//current timepoint
 	private int timepoint = 0;
-	//default alphar value
 	public float alphaR = 0.5f;
-	//standard deviation
 	private float std = 1;
-	//microstimulus index
 	private int microstimulusIndex = 100;
-	//direct activation
 	private float activation = 0f;
 	private float directActivation = 0f;
-	//current phase
 	private int phase = 0;
-	//total number of stimuli in design
 	private int totalStimuli;
-	//current number of elapsed trials
 	private int trialCount = 0;
-	//total number of elements rounded up
 	private int totalMax = 0;
 	//private float[][][] elementCurrentWeights;
-	//names of stimuli
 	private List<String> names;
-	//associative activation
 	private float assoc;
-	//associative discount
 	private float vartheta;
-	//reinforced alphas
 	private float[] variableSalience;
-	//nonreinforced alphas
+
 	private float[] csVariableSalience;
-	//group of design
 	private SimGroup group;
-	//first pass over data
 	private boolean firstPass = true;
-	//dummy
 	private float newValue = 0f;
-	//have values been stored this trial
 	private boolean isStored = false;
-	//context time wave norm
 	private boolean presenceMean;
-	//current ITI
 	private int iti = 0;
-	//was active this trial
 	private boolean wasActive = false;
-	//element weights
 	private float[][][] subelementWeights;
 	private float[][][] oldElementWeights;
-	//element activations
 	private int[] subelementActivations;
 	private float subelementNumber = 1;
-	//curve parameter
 	private float cscLikeness;
-	//has been reset this trial
 	private boolean hasReset = false;
 	private boolean subsetSet = false;
 	private boolean disabled = false;
 	//private TreeMap<String, ArrayList<Integer>> commonIndexSet;
-	//us cv parameter for time wave
 	private float USCV = 2.5f;
-	//us persistence
 	private float usPersistence;
 	//private float[][] aggregateSaliences;
-	//starting alpha value
+
 	private float startingAlpha = 1;
-	//non-reinforced alpha
 	public float alphaN;
-	//us salience
 	private float beta;
-	//cs salience
 	private float salience;
-	//us average error
 	private float averageUSError;
 	private float oldUSError;
-	//cs average error
 	private float averageCSError;
 	private float oldCSError;
-	//current trial notation
 	private String currentTrialString;
-	//number of each trial type
 	private TreeMap<String,Integer> trialTypeCount;
-	//current session
 	private int session;
-	//for database entry
 	private long storeLong;
-	//overall activation
 	private float generalActivation;
 	private float difference;
 	private float time;
-	//numerator of time-wave
 	private float numerator;
 	private int adj;
-	//variable alpha used for current learning
 	private float currentVariableSalience;
-	//salience used for current learning
 	private float curSal;
-	//total prediction
 	private float totalPrediction;
-	//total weight
 	private float totalWeight;
 	private float fixer;
-	//mean of outcome timewave
 	private float maxDurationPoint2;
-	//mean of predictor timewave
 	private float maxDurationPoint;
-	//predictor error
 	private float nE;
-	//outcome error
 	private float nE2;
-	//self-prediction discount
 	private float selfDereferencer;
 	private int index;
-	//is element part of US
 	public boolean isUS = false;
-	//is element part of context
 	public boolean isContext = false;
 	private float microPlus;
-	//parent stimulus
 	private Stimulus parent;
-	//presences of predictor and outcome
 	private int ac1,ac2;
-	//time averaged errors
 	private float[] totalUSError;
 	private float[] totalCSError;
-	//maximum activation
 	private float maxActivation;
 	//private float[][] eligibilities;
-	//presences of stimuli
 	private float[] presences;
 	private float discount = 1;
-	//time average update factor
 	private float factor;
 	private float ratio;
-	//eligibility modulator
 	private float eligi;
 	private float ownActivation;
 	private boolean outOfBounds;
-	//exponent of modulator
 	private float exponent;
 	private float dis;
 	private float x1;
@@ -162,20 +104,14 @@ public class StimulusElement {
 	//private TreeMap commonIndexes;
 	//private TreeMap<String, ArrayList<Integer>> commonIndexSet;
 	private float tempDelta;
-	//us salience
 	private float usSalience = 0.1f;
-	//asymptote of learning
 	private float asymptote;
-	//database keys
 	private String elementCurrentWeightsKey;
 	private String eligibilitiesKey;
 	private String aggregateActivationsKey;
-	//total trials in design
 	private int totalTrials;
-	//database keys
 	private String aggregateSaliencesKey;
 	private String aggregateCSSaliencesKey;
-	//database arrays
 	private float[] temp;
 	private float[][] current;
 	private Object ob3,ob2,ob1;
@@ -183,23 +119,16 @@ public class StimulusElement {
 	public Stimulus a;
 	public Stimulus b;
 	private boolean kickedIn = false;
-	//common elements check
 	private boolean isA = false;
 	private boolean isB = false;
 	private boolean notTotal =true;
-	//US intensity
 	private float intensity = 1f;
 	private float asy;
-	//normalizing common associative strengths
 	private float commonDiscount;
 	private double decay;
-	//ctx time wave ratio to trial and iti
 	private float ctxratio;
-	//current point relative to time-wave mean
 	private float durationPoint;
-	//microstimulus index
 	private float microIndex;
-	//denominator of time-wave
 	private float denominator;
 	
 	public StimulusElement(int microIndex,Stimulus parent,SimGroup group, String name, float alpha, float std, int trials, int totalStimuli, int totalMicros, int totalMax, float generalization, float lambdaPlus, float usBoost, float vartheta, boolean presenceMean,boolean esther) {
@@ -224,7 +153,7 @@ public class StimulusElement {
         totalUSError = new float[group.getNoOfPhases()];
         
         temp = new float[totalMax + iti];
-        
+
 		//eligibilities = new float[totalStimuli][totalMax];
         variableSalience = new float[group.getNoOfPhases()];
         csVariableSalience = new float[group.getNoOfPhases()];
@@ -233,7 +162,7 @@ public class StimulusElement {
         aggregateActivationsKey = group.getNameOfGroup() + parent.getName()+this.microstimulusIndex + "aggregateActivations";
         aggregateSaliencesKey = group.getNameOfGroup() + parent.getName()+this.microstimulusIndex + "aggregateSaliences";
         aggregateCSSaliencesKey = group.getNameOfGroup() + parent.getName()+this.microstimulusIndex + "aggregateCSSaliences";
-        //initialize hard-drive databases
+        
         group.makeMap(elementCurrentWeightsKey+"");
         group.makeMap(eligibilitiesKey+"");
         group.makeMap(aggregateActivationsKey+"");
@@ -279,7 +208,7 @@ public class StimulusElement {
 	}
 	
 	public void setSubsetSize(int i) {
-		//set subset size and common elements + exponent
+		
 		if (!subsetSet) {
 
 			discount = group.getModel().getDiscount();
@@ -331,7 +260,6 @@ public class StimulusElement {
 
 	
 	public void nextCombination() {
-		//increment random combinations
 		combination++;
 		session = 1;
 		trialTypeCount.clear();
@@ -344,7 +272,6 @@ public class StimulusElement {
 	}
 	
 	public void setPhase(int phase) { 
-		//reset and set data correctly for next phase of the design
 		session =1;
 		combination = 1;
 		trialTypeCount.clear();
@@ -361,7 +288,6 @@ public class StimulusElement {
 		}
 		this.phase = phase;
 	if (phase == 0 ){
-
 		subelementWeights = new float[(int)subelementNumber][totalStimuli][totalMax];
 		kickedIn = false;
 		variableSalience[0] =alphaR;
@@ -403,7 +329,6 @@ public class StimulusElement {
 	}
 	
 	public void reset(boolean last,int currentTrials) {
-		//reset values after trial
 		activation = 0f;
 		assoc = 0;
 		if (phase > 0 ) {
@@ -452,17 +377,22 @@ public class StimulusElement {
         	group.addToMap(i+"",new float[totalMax],eligibilitiesKey+"",true);
         }
 		timepoint = 0;
-		trialCount -= Math.min(trialCount,currentTrials);
 		directActivation = 0;
 		if (group.getPhases().get(phase).isRandom() && phase == 0) {variableSalience[phase] = alphaR;csVariableSalience[phase] = alphaN;}
 		wasActive = false;
 		firstPass = true;
 		isStored = false;
 		}
+
+		trialCount -= Math.min(trialCount,currentTrials);
 	}
 	
 	public String incrementTimepoint(int time) {
-		hasReset = false;		
+		hasReset = false;
+		
+		
+				
+		
 		return elementCurrentWeightsKey;
 	}
 	
@@ -470,7 +400,6 @@ public class StimulusElement {
 	
 	
 	public void resetForNextTimepoint() {
-		//reset values for next timepoint
 		if (!hasReset) {
 			maxActivation = 0;
 			hasReset = true;
@@ -489,7 +418,6 @@ public class StimulusElement {
 
 
 	public void setActive(String name, boolean b, float durationPoint) {
-		//set the direct activity for current timepoint
 		if (b && !disabled) wasActive = true;
 		this.durationPoint = durationPoint;
 		isA = (a == null) ? false : (a.getHasBeenActive());
@@ -498,7 +426,6 @@ public class StimulusElement {
 	}
 	
 	public void setTrialLength(int trialLength) {
-		//set trial length and timing parameters
 	microIndex = microPlus;//microIndexes2.put(name,microPlus);
 	//denominators2.put(name,(float)( 2f*Math.pow((isUS ? Math.sqrt((microPlus+ adj)*USCV*ctxratio) : Math.sqrt((microPlus+ adj)*std*ctxratio)), 2f)));
 	denominator = (float)( 2f*Math.pow((isUS ? Math.sqrt((microPlus+ adj)*USCV*ctxratio) : Math.sqrt((microPlus+ adj)*std*ctxratio)), 2f));
@@ -506,12 +433,10 @@ public class StimulusElement {
 	ratio = isContext ? trialLength/parent.getList().length*(10f/10f) : 1f;}
 
 	public void setRAlpha(float alpha) {
-		//set starting alpha value
 		this.alphaR = alpha;
 		variableSalience[0] = alpha;
 	}
 	public void setNAlpha(float alphaN) {
-		//set starting alpha value
 		this.alphaN = alphaN;
 		csVariableSalience[0] = alphaN;
 	}
@@ -532,7 +457,6 @@ public class StimulusElement {
 	}
 
 	public void store() {
-		//store at the end of trial
 		if (!isStored) {
 			timepoint = 0;
 			directActivation = 0;
@@ -562,7 +486,6 @@ public class StimulusElement {
 	public boolean isCommon() {return getName().length() > 1;}
 	
 	public void updateAssocTrace(float assoc) {
-		//update associative values and sample
 		asoc = Math.max(0, Math.min(1f, assoc*vartheta));
 		
 		this.assoc = asoc;
@@ -607,7 +530,7 @@ public class StimulusElement {
 	}
 	
 	public boolean isAfter(StimulusElement e) {
-		//calculate temporal map
+		
 		maxDurationPoint = durationPoint;
 		maxDurationPoint2 = e.getDurationPoint();
 		
@@ -620,7 +543,7 @@ public class StimulusElement {
 	}
 	
 	public float getAsymptote() {
-		//calculate asymptote of learning
+		
 		
 		if (timepoint <= parent.getLastOnset()) {if (assoc > 0.9 ||  getDirectActivation() > 0.1*intensity) {asy = 1;} else {asy = 0;}}
 		else {if (getDirectActivation() > 0.1*intensity) {asy = 1;} else { asy = 0;}}
@@ -638,7 +561,8 @@ public class StimulusElement {
 	public float getAssoc(){return assoc;}
 	public void updateElement(float otherActivation,float otherAlpha,StimulusElement other, float ownError, float otherError, String otherName, SimGroup group) {
 
-		//update weights
+		
+		
 		nE = otherError;
 		nE2 = Math.abs(ownError);
 		//
@@ -667,7 +591,7 @@ public class StimulusElement {
 		
 		//
 		selfDereferencer=1f;
-		if (getName().contains(other.getName()) || other.getName().contains(getName())) {selfDereferencer = this.isUS ? 0 : 0.05f;}
+		if (getName().contains(other.getName()) || other.getName().contains(getName())) {selfDereferencer = this.isUS ? 0 : 0.01f;}
 		index = names.indexOf(otherName);
 		if (index == -1) {
 			names.add(otherName);
@@ -697,7 +621,7 @@ public class StimulusElement {
 			//System.out.println("AC " + subelementNumber + " " + commonDiscount + " " + generalActivation + " " + curSal +"  " + eligi + " " + currentVariableSalience + " " + nE);
 		}
 		//float otherDiscount = 1f;//other.isCommon() ? group.getCommon() : other.parent.getCommonMap().size() > 0 ? 1f - group.getCommon() : 1f;
-		tempDelta = (1f/((float)subelementNumber*5f*parent.getList().length))*commonDiscount*generalActivation*other.getAlpha()*curSal*other.getGeneralActivation()*eligi*selfDereferencer*currentVariableSalience*nE*nE2;
+		tempDelta = (1f/((float)subelementNumber*parent.getList().length))*commonDiscount*generalActivation*other.getAlpha()*curSal*other.getGeneralActivation()*eligi*selfDereferencer*currentVariableSalience*nE*nE2;
 		tempDelta *= isUS ? usSalience*intensity : 1f;
 		//if (parent.isContext && other.isUS && timepoint == 4) {System.out.println("context " + timepoint + " "+ directActivation + " "+ x1 + " " + x2 + " " + x3 + " " + nE + " " +otherError + " " + tempDelta);}
 		
@@ -724,7 +648,6 @@ public class StimulusElement {
 			totalPrediction += subelementWeights[i][index][other.getMicroIndex()]*generalActivation;
 			
 			}
-		//store values in database
 		if (group.getModel().isExternalSave()) {
 		storeLong = group.createDBString(this,currentTrialString, other.getParent(),phase, session, trialTypeCount.get(currentTrialString), timepoint, true);
 		group.addToDB(storeLong, totalPrediction);
@@ -751,7 +674,7 @@ public class StimulusElement {
 	public float getIntensity() {return intensity;}
 	public void updateActivation(String name, float presence, float duration,int microstimulusIndex) {
 		
-		//update direct activation
+		
 		this.microstimulusIndex = microstimulusIndex;
 		microPlus = microstimulusIndex+1;
 		time = presenceMean ? 1-presence : durationPoint;
@@ -791,7 +714,6 @@ public class StimulusElement {
    
     
     public float getAggregateActivation(int trial, int timepoint) {
-    	//get from db
     	temp = new float[totalMax + iti];
 		ob3 = group.getFromDB(trial+"", aggregateActivationsKey);
 		if (ob3 != null) {
@@ -800,7 +722,6 @@ public class StimulusElement {
 		} else {return 0f;}
     }
     public float getAggregateSalience(int trial, int timepoint) {
-    	//get from db
     	temp = new float[totalMax + iti];
 		ob3 = group.getFromDB(trial+"", aggregateSaliencesKey);
 		if (ob3 != null) {
@@ -810,7 +731,6 @@ public class StimulusElement {
     }
     
     public float getAggregateCSSalience(int trial, int timepoint) {
-    	//get from db
     	temp = new float[totalMax + iti];
 		ob3 = group.getFromDB(trial+"", aggregateCSSaliencesKey);
 		if (ob3 != null) {
@@ -827,7 +747,7 @@ public class StimulusElement {
     public float getSubActivation(int index) {return subelementActivations[index];}
     
     public float getPrediction(int stimulus,int element,boolean current, boolean maximum) {
-    	//calculate prediction for other element
+    	
     	totalPrediction = 0f;
     	for (int i = 0; i < subelementNumber; i++){
     		/*float actDiscount = 0;
@@ -858,7 +778,6 @@ public class StimulusElement {
     	
     }
     public void setVariableSalience(float vs) {
-    	//set variable alpha in db
     	temp = new float[totalMax + iti];
 		ob3 = group.getFromDB(trialCount+"", aggregateSaliencesKey);
 		if (ob3 != null) {
@@ -869,7 +788,6 @@ public class StimulusElement {
     	this.variableSalience[phase] =  vs <= 0.001 ? 0 : vs;
     	}
     public void setCSVariableSalience(float vs) {
-    	//set non-reinforced alpha in db
     	temp = new float[totalMax + iti];
 		ob3 = group.getFromDB(trialCount+"", aggregateCSSaliencesKey);
 		if (ob3 != null) {
@@ -918,9 +836,9 @@ public class StimulusElement {
 		
 	}
 	public void storeAverageUSError(float d, float act) {
-		//store time averaged US error
 		oldUSError = averageUSError;
-		if (averageUSError == 0) {averageUSError = Math.max(0,alphaR);}
+		if (averageUSError == 0) {averageUSError = Math.max(0,alphaR);
+		}
 		else averageUSError = averageUSError*(1-act/factor) + d*act/factor;
 	}
 	public float getCurrentUSError() {
@@ -932,7 +850,6 @@ public class StimulusElement {
 	}
 	
 	public void storeAverageCSError(float d, float act) {
-		//store time averaged CS error
 		oldCSError = averageCSError;
 		if (averageCSError == 0) {averageCSError = Math.max(0,alphaN);}
 		else averageCSError = averageCSError*(1-act/factor) + d*act/factor;
@@ -1031,8 +948,7 @@ public class StimulusElement {
 	}
 	
 	public void setParams() {
-		
-		//recalculate common element parameters such that they match an equivalent design without common elements
+		if (getName().contains("c")) {
 		if (isA &&  isB && notTotal) {
 			std = a.getList()[0].getSTD()/2f + b.getList()[0].getSTD()/2f;
 			alphaR = a.getRAlpha()/2f + b.getRAlpha()/2f;
@@ -1079,6 +995,7 @@ public class StimulusElement {
 			salience = b.getSalience();
 			cscLikeness = b.getCSCLike();
 			kickedIn = true;
+		}
 		}
 	}
 	

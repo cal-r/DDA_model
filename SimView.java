@@ -880,10 +880,10 @@ public class SimView extends JFrame {
 							record[c] = "0.01"; //$NON-NLS-1$
 						else if (((String) record[0]).indexOf(recency) != -1
 								&& c == 1) 
-							record[c] = "0.1"; //$NON-NLS-1$
+							record[c] = "0.01"; //$NON-NLS-1$
 						else if (((String) record[0]).indexOf(common) != -1
 								&& c == 1) 
-							record[c] = "0.4"; //$NON-NLS-1$
+							record[c] = "0.1"; //$NON-NLS-1$
 						else if (((String) record[0]).indexOf(csScalar) != -1
 								&& c == 1) 
 							record[c] = "2"; //$NON-NLS-1$
@@ -893,7 +893,7 @@ public class SimView extends JFrame {
 						
 						else if (((String) record[0]).indexOf(csRecency) != -1
 								&& c == 1) 
-							record[c] = "0.1";
+							record[c] = "0.01";
 						else if (((String) record[0]).indexOf(b) != -1
 								&& c == 1) 
 							record[c] = "0.75";

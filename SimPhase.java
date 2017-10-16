@@ -1272,8 +1272,8 @@ public class SimPhase {
 				}
 				float[][] tempTrialWeights = s
 						.getTrialAverageWeights(0,getPhaseNum() - 1);
-				//float[][] tempTrialWeightsA = s
-					//	.getTrialAverageWeightsA(0,getPhaseNum() - 1);
+				float[][] tempTrialWeightsA = s
+						.getTrialAverageWeightsA(0,getPhaseNum() - 1);
 				for (StimulusElement se : s.getList()) {
 					int usNumber = 0;
 					for (Stimulus stim : group.getCuesMap().values()) {
@@ -1295,12 +1295,12 @@ public class SimPhase {
 				//
 
 				//group.makeMap(gn + phaseNum + " pTA");
-				//float[][] processedTrialAverageWeights = new float[tempTrialWeights.length][tempTrialWeights[0].length];
+				float[][] processedTrialAverageWeights = new float[tempTrialWeights.length][tempTrialWeights[0].length];
 
 				//
-				//float[][] processedTrialAverageWeights2 = new float[tempTrialWeights.length][tempTrialWeights[0].length];
-				//float[][] processedTrialAverageWeightsA = new float[tempTrialWeights.length][tempTrialWeights[0].length];
-				//float[][] processedTrialAverageWeights2A = new float[tempTrialWeights.length][tempTrialWeights[0].length];
+				float[][] processedTrialAverageWeights2 = new float[tempTrialWeights.length][tempTrialWeights[0].length];
+				float[][] processedTrialAverageWeightsA = new float[tempTrialWeights.length][tempTrialWeights[0].length];
+				float[][] processedTrialAverageWeights2A = new float[tempTrialWeights.length][tempTrialWeights[0].length];
 				
 				
 				group.addToMap(s.getName(), new float[tempTrialWeights.length][tempTrialWeights[0].length], gn + phaseNum + " cur",true);
@@ -1358,9 +1358,9 @@ public class SimPhase {
 								int indexOfName = s.getNames().indexOf(name);
 								
 								float[][] temp =((float[][])group.getFromDB(s.getName(), group.getNameOfGroup() + phaseNum + " curA"));
-								//temp[index + incr
-																//+ presenceTrials][canonicalNames.get(
-																//s.getName()).indexOf(name)] = tempTrialWeightsA[n][indexOfName];
+								temp[index + incr
+																+ presenceTrials][canonicalNames.get(
+																s.getName()).indexOf(name)] = tempTrialWeightsA[n][indexOfName];
 								group.addToMap(s.getName(), temp, group.getNameOfGroup() + phaseNum + " curA", true);
 								temp = null;
 							}
@@ -1375,8 +1375,8 @@ public class SimPhase {
 								int indexOfName = s.getNames().indexOf(name);
 								inactiveValues.get(inactiveCounter).put(name,
 										tempTrialWeights[n][indexOfName]);
-								//inactiveValuesA.get(inactiveCounter).put(name,
-									//	tempTrialWeightsA[n][indexOfName]);
+								inactiveValuesA.get(inactiveCounter).put(name,
+										tempTrialWeightsA[n][indexOfName]);
 							}
 							inactiveCounter++;
 						}
@@ -1384,15 +1384,15 @@ public class SimPhase {
 							for (int n2 = 0; n2 < inactiveCounter; n2++) {
 								for (String name : canonicalNames.get(s
 										.getName())) {
-									//float[][] temp = ((float[][])group.getFromDB(s.getName(), group.getNameOfGroup() + phaseNum + " curA"));
-									//temp[index + incr
-										//							+ presenceTrials + n2][canonicalNames
-											//						.get(s.getName()).indexOf(name)] = inactiveValuesA
-												//					.get(n2).get(name);
+									float[][] temp = ((float[][])group.getFromDB(s.getName(), group.getNameOfGroup() + phaseNum + " curA"));
+									temp[index + incr
+																	+ presenceTrials + n2][canonicalNames
+																.get(s.getName()).indexOf(name)] = inactiveValuesA
+																	.get(n2).get(name);
 
 									
-									//group.addToMap(s.getName(), temp, group.getNameOfGroup() + phaseNum + " curA", true);
-									//temp = null;
+									group.addToMap(s.getName(), temp, group.getNameOfGroup() + phaseNum + " curA", true);
+									temp = null;
 								}
 							}
 						}
@@ -1403,8 +1403,8 @@ public class SimPhase {
 							float[][] temp =((float[][])group.getFromDB(s.getName(), group.getNameOfGroup() + phaseNum + " curA"));
 							//System.out.println(temp == null);
 							
-						//	temp[n][canonicalNames.get(
-							//		s.getName()).indexOf(name)] = tempTrialWeightsA[n][indexOfName];
+						temp[n][canonicalNames.get(
+									s.getName()).indexOf(name)] = tempTrialWeightsA[n][indexOfName];
 							group.addToMap(s.getName(), temp, group.getNameOfGroup() + phaseNum + " curA", true);
 							temp = null;
 						}
@@ -1416,7 +1416,7 @@ public class SimPhase {
 						temp[n][k] = tempTrialWeights[n][k];
 						group.addToMap(s.getName(), temp, group.getNameOfGroup() + phaseNum + " cur2", true);
 						temp = ((float[][])group.getFromDB(s.getName(), group.getNameOfGroup() + phaseNum + " curA2"));
-						//temp[n][k] = tempTrialWeightsA[n][k];
+						temp[n][k] = tempTrialWeightsA[n][k];
 						group.addToMap(s.getName(), temp, group.getNameOfGroup() + phaseNum + " curA2", true);
 						temp = null;
 					}
@@ -1425,21 +1425,6 @@ public class SimPhase {
 				for (String s2: trialTypeCounters.keySet()) {
 					trialTypeCounters.put(s2,0);
 				}
-				//group.addToMap(s.getName(), processedTrialAverageWeights, gn + phaseNum + " cur",true);
-
-				//group.addToMap(s.getName(), processedTrialAverageWeights2, gn + phaseNum + " cur2",true);
-
-				//group.addToMap(s.getName(), processedTrialAverageWeightsA, gn + phaseNum + " curA",true);
-				
-				//group.addToMap(s.getName(), processedTrialAverageWeights2A, gn + phaseNum + " curA2",true);
-				/*cur.put(s.getName(),
-						processedTrialAverageWeights);
-				cur2.put(s.getName(),
-						processedTrialAverageWeights2);
-				curA.put(s.getName(),
-						processedTrialAverageWeightsA);
-				curA2.put(s.getName(),
-						processedTrialAverageWeights2A);*/
 			}
 			}
 			averageTheWeights(false,gn + phaseNum + " r",gn + phaseNum + " cur",i,tempSeq,trialIndexMapb,trialIndexMap2);
@@ -1615,7 +1600,10 @@ public void averageTheWeights(boolean remap,String mapName,String otherMapName, 
 				for (int j = 0; j < vals2[i].length; j++) {
 					
 					
-					if (!str.equals("")) vals[remap ? counter + first : i][j] = (vals[remap ? counter + first : i][j]*combo + vals2[howManyAlready][j])/(combo + 1f);
+					if (!str.equals("")) {
+						vals[remap ? counter + first : i][j] = (vals[remap ? counter + first : i][j]*combo + vals2[howManyAlready][j])/(combo + 1f);
+						
+					}
 					
 				}
 			}
