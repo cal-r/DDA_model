@@ -62,6 +62,7 @@ import simulator.configurables.ContextConfig;
 import simulator.configurables.ContextConfig.Context;
 import simulator.configurables.ITIConfig;
 import simulator.configurables.TimingConfiguration;
+import simulator.dialog.CommonElementsDialog;
 import simulator.dialog.SharedElementsDialog;
 import simulator.dialog.USIntensityDialog;
 import simulator.editor.TrialStringEditor;
@@ -397,6 +398,7 @@ public class SimController implements ActionListener, PropertyChangeListener {
 				view.setStatusComponent(true, "Save"); //$NON-NLS-1$
 
 				view.intensityButton.setEnabled(true);
+				view.commonButton.setEnabled(true);
 			} else {
 				// getModel().cancel();
 				control.setCancelled(true);
@@ -408,6 +410,7 @@ public class SimController implements ActionListener, PropertyChangeListener {
 				view.setStatusComponent(false, "Save"); //$NON-NLS-1$
 
 				view.intensityButton.setEnabled(false);
+				view.commonButton.setEnabled(true);
 			}
 			view.getGlassPane().setCursor(
 					Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -478,7 +481,9 @@ public class SimController implements ActionListener, PropertyChangeListener {
 	
 	private SharedElementsDialog seDialog;
 	private USIntensityDialog uid;
+	private CommonElementsDialog ceid;
 	private TreeMap<String, ArrayList<Float>> tempIntensities;
+	private TreeMap<String,TreeMap<String, Float>> tempCommon;
 	private SimGraphExport exporter2;
 	private ExportTask exporterTask2;
 	private String lastDirectory2;
@@ -499,6 +504,7 @@ public class SimController implements ActionListener, PropertyChangeListener {
 		view.setStatusComponent(false, "dispGraph"); //$NON-NLS-1$
 
 		view.intensityButton.setEnabled(false);
+		view.commonButton.setEnabled(false);
 		view.setStatusComponent(false, "Export"); //$NON-NLS-1$
 		view.setStatusComponent(false, "Save"); //$NON-NLS-1$
 		colourMap = new TreeMap();
@@ -640,7 +646,7 @@ public class SimController implements ActionListener, PropertyChangeListener {
 		// The user chooses to open a saved experiment from the the saved files.
 		// The file contains the values that were added to run the experiment.
 		if (e.getActionCommand() == "Open") { //$NON-NLS-1$
-
+			
             view.errorCheckList.setEnabled(true);
             view.errorTrialCheckList.setEnabled(true);
 			for (SimGroup g : model.getGroups().values()) {g.closeDBs();}
@@ -672,6 +678,7 @@ public class SimController implements ActionListener, PropertyChangeListener {
 				try {
 					File file = fc.getSelectedFile();
 					loadObjects(file);
+					model.setCommonMap(new TreeMap());
 				} catch (FileNotFoundException fe) {
 					view.showError(Messages
 							.getString("SimController.fileError")); //$NON-NLS-1$
@@ -707,7 +714,6 @@ public class SimController implements ActionListener, PropertyChangeListener {
 			uid.setVisible(true);
 			
 		}
-		
 		if (e.getActionCommand() == "OKintensity") {
 			
 			tempIntensities = model.getIntensities();
@@ -720,6 +726,26 @@ public class SimController implements ActionListener, PropertyChangeListener {
 			}
 			uid.setVisible(false);
 		}
+		if (e.getActionCommand() == "commonMap") {
+
+			ceid = new CommonElementsDialog(this,view);
+			ceid.setVisible(true);
+			
+		}
+		if (e.getActionCommand() == "OKcommonMap") {
+			
+			tempCommon = model.getCommon();
+			int row = 0;
+			for (String g : tempCommon.keySet()) {
+				for (String s : tempCommon.get(g).keySet()) {
+					//System.out.println(row +" " + s + " " + g + " " + ceid.getValue(row, 2));
+					tempCommon.get(g).put(s, Float.valueOf(ceid.getValue(row, 2)));
+					row++;
+				}
+			}
+			ceid.setVisible(false);
+		}
+		
 
 		// The user chooses to save the current experiment from into a specific
 		// file.
@@ -1061,6 +1087,7 @@ public class SimController implements ActionListener, PropertyChangeListener {
 			doSetVariables(false);
 
     		model.initializeIntensities();
+    		model.initializeCommonMap();
             view.errorCheckList.setEnabled(true);
             view.errorTrialCheckList.setEnabled(true);
 		}
@@ -1255,7 +1282,7 @@ public class SimController implements ActionListener, PropertyChangeListener {
 		    		
 				}
 			}
-
+			model.setCommonMap(tempCommon);
 			model.setIntensities(tempIntensities);
 			
 		}
@@ -1521,6 +1548,7 @@ public class SimController implements ActionListener, PropertyChangeListener {
 		view.setStatusComponent(false, "dispGraph"); //$NON-NLS-1$
 
 		view.intensityButton.setEnabled(true);
+		view.commonButton.setEnabled(true);
 		view.setOutput("");
 		view.setStatusComponent(false, "Export"); //$NON-NLS-1$
 		view.setStatusComponent(true, "Save"); //$NON-NLS-1$

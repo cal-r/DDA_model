@@ -84,6 +84,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -543,7 +544,7 @@ public class SimView extends JFrame {
 										record[c] = ""; //$NON-NLS-1$
 									}
 								} else {
-									record[c] = "0.3"; //$NON-NLS-1$
+									record[c] = "0.1"; //$NON-NLS-1$
 								}
 							}
 							data1.add(record);
@@ -809,7 +810,7 @@ public class SimView extends JFrame {
 		private static final String recency = "US \u03C1";
 		private static final String csRecency = "CS \u03C1";
 		private static final String inte = "integration";
-		private static final String common = "common";
+		private static final String common = "shared";
 
 		private static final String setsize = "setsize";
 		private static final String cscLikeness = "skew";
@@ -880,7 +881,7 @@ public class SimView extends JFrame {
 							record[c] = "0.01"; //$NON-NLS-1$
 						else if (((String) record[0]).indexOf(recency) != -1
 								&& c == 1) 
-							record[c] = "0.01"; //$NON-NLS-1$
+							record[c] = "0.1"; //$NON-NLS-1$
 						else if (((String) record[0]).indexOf(common) != -1
 								&& c == 1) 
 							record[c] = "0.1"; //$NON-NLS-1$
@@ -893,7 +894,7 @@ public class SimView extends JFrame {
 						
 						else if (((String) record[0]).indexOf(csRecency) != -1
 								&& c == 1) 
-							record[c] = "0.01";
+							record[c] = "0.1";
 						else if (((String) record[0]).indexOf(b) != -1
 								&& c == 1) 
 							record[c] = "0.75";
@@ -1397,18 +1398,20 @@ public class SimView extends JFrame {
 	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private float screenwidth = (float) screenSize.getWidth();
 	private float screenheight = (float) screenSize.getHeight();
-	public static final String TABLE_FONT_NAME = "Helvetica";
-	public static final int TABLE_FONT_STYLE = 1;
+	public static final String TABLE_FONT_NAME = "Arial";
+	public static final int TABLE_FONT_STYLE = 1; 
 	boolean isWindows = System.getProperty("os.name").toUpperCase().contains("WINDOWS") ;
-	private int offset = !isWindows ? 200 : 0;
-	private float offset2 = !isWindows ? 0.95f : 0.95f;
-	int val = 1800;
-	public int TABLE_FONT_SIZE = screenwidth > val ? (int) Math.max(12, Math.round(screenwidth/240.0d)) : 12;
-	public int INITIAL_WIDTH = (screenwidth > val) ? (int) Math.round(screenwidth/(2*offset2)) : offset != 0 ? 840 : 980;
-	public int INITIAL_HEIGHT = (screenwidth > val) ? (int) Math.round(screenheight/1.02) : 980;
-	public int INITIAL_H = (screenwidth > val) ? (int) Math.round(screenheight/(1.02d)*offset2) : offset != 0 ? 840 : 950;
-
-	public int TABLE_ROW_HEIGHT = screenwidth > val ? INITIAL_HEIGHT/60 : 17;
+	private int offset = !isWindows ? 200 : 0; 
+	private float offset2 = !isWindows ? 0.67f : 0.8f;//EMP 02/05/2018 from 0.67f : 0.8f
+	int val = 500;//EMP 02/05/2018 from 500
+	
+	private float unit = isWindows ? 8 : 7.6f;//EMP 02/05/2018 from 8: 7.5f to 8 : 7.6f
+	public int TABLE_FONT_SIZE = screenwidth > val ? (int) Math.max(12, Math.round(screenwidth/250.0d)) : 11; //EMP 02/05/2018:from 250 test INEFFECTIVE
+	public int INITIAL_WIDTH = (screenwidth > val) ? (int) Math.round(screenwidth/(2*offset2)) : offset != 0 ? 450 : 450;//EMP 02/05/2018:450 to 550 INEFFECTIVE
+	public int INITIAL_HEIGHT = (screenwidth > val) ? (int) Math.round(1.03*screenheight - screenheight/unit) : (int) Math.round(screenheight - screenheight/unit);//EMP 02/05/2018 from screenheight/unit
+	public int INITIAL_H = (screenwidth > val) ? (int) Math.round(1.03*screenheight - screenheight/unit) : (int) Math.round(screenheight - screenheight/unit);//EMP 02/05/2018 from public int INITIAL_H = (screenwidth > val) ? (int) Math.round(screenheight - screenheight/unit) : (int) Math.round(screenheight - screenheight/unit);
+	
+	public int TABLE_ROW_HEIGHT = screenwidth > val ? INITIAL_HEIGHT/(isWindows? 66:58) : 21; //EMP 02/05/2018: changed from 67:75 17 to 21 
 	private static final float AligmentY = 0;
 	private SimModel model;
 
@@ -1435,6 +1438,7 @@ public class SimView extends JFrame {
 	private JButton setVariablesBut, clearBut, runBut, dispGraphBut,
 			addPhaseBut, removePhaseBut, addGroupBut, removeGroupBut,gButton;
 	public  JButton intensityButton;
+	public  JButton commonButton;
 	private JScrollPane phasesScroll, CSValuesScroll, USValuesScroll, DDValuesScroll,CSVariableScroll,
 			outputScroll;
 	private JTable phasesTable, CSValuesTable, CSVariableTable, USValuesTable, DDValuesTable;
@@ -1546,11 +1550,15 @@ public class SimView extends JFrame {
                 .getImage());
         icon.add(createImageIcon("/simulator/extras/icon_512.png", "")
                 .getImage());
+        icon.add(createImageIcon("/simulator/extras/dd_newMAC.png", "")// EMP 03/05/2018 added
+        		.getImage());// EMP 03/05/2018 added
+        
         this.setIconImages(icon);
 		contextAlphaR = 0.25f;
 		contextAlphaN = 0.2f;
 		contextSalience = 0.07f;
 		model = m;
+		model.setView(this);
 		isUSAcrossPhases = false;
 		isSetCompound = true;
 		isSetConfiguralCompounds = false;
@@ -1558,7 +1566,6 @@ public class SimView extends JFrame {
 		hiddenColumns = new LinkedHashMap<TableColumn, Integer>();
 
 		cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
-
 		center();
 		createMenu();
 		createGUI2();
@@ -1582,6 +1589,7 @@ public class SimView extends JFrame {
 		runBut.addActionListener(event);
 		dispGraphBut.addActionListener(event);
 		intensityButton.addActionListener(event);
+		commonButton.addActionListener(event);
 		waTimeCheckList.addActionListener(event);
 		waTrialCheckList.addActionListener(event);
 		vGraphCheckList.addActionListener(event);
@@ -2001,7 +2009,7 @@ public class SimView extends JFrame {
 					tip = "CS recency"; //$NON-NLS-1$
 					break;	
 				case 2:
-					tip = "Proportion of common elements between stimuli.";
+					tip = "Proportion of shared elements between stimuli.";
 					break;
 				case 3:
 					tip = "Discount on associative activation.";
@@ -2026,7 +2034,7 @@ public class SimView extends JFrame {
 			}// end MouseMoved
 		}); // end MouseMotionAdapter
 
-		otherValuesTable.setPreferredSize(new Dimension(TABLE_FONT_SIZE*20,TABLE_FONT_SIZE*9));
+		otherValuesTable.setPreferredSize(new Dimension(TABLE_FONT_SIZE*20,TABLE_FONT_SIZE*10));//EMP-02-05-2018 from otherValuesTable.setPreferredSize(new Dimension(TABLE_FONT_SIZE*20,TABLE_FONT_SIZE*9));
 		otherValuesScroll = new JScrollPane(otherValuesTable);
 	}
 	
@@ -2061,7 +2069,7 @@ public class SimView extends JFrame {
 					Component c = dce.getComponent();
 					JTextComponent jtc = (JTextComponent) c;
 					jtc.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE,
-							(int)Math.round(TABLE_FONT_SIZE*1.3))); // Alberto Fernandez July-2011
+							(int)Math.round(TABLE_FONT_SIZE*1.25))); // Alberto Fernandez July-2011//EMP 02/05/2018 from 1.3 t0 1.25
 					jtc.requestFocus();
 
 					// Alberto Fernandez Oct-2011
@@ -2157,8 +2165,8 @@ public class SimView extends JFrame {
 		phasesTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		phasesTable.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE,
-				(int)Math.round(TABLE_FONT_SIZE*1.3))); // Alberto Fern�ndez July-2011
-		phasesTable.setRowHeight((int)Math.round(TABLE_ROW_HEIGHT*1.3));
+				(int)Math.round(TABLE_FONT_SIZE*1.25))); // Alberto Fern�ndez July-2011  ////EMP 02/05/2018 from 1.3
+		phasesTable.setRowHeight((int)Math.round(TABLE_ROW_HEIGHT*1.55)); //EMP-02-05-2018 1.3 to 1.55
 
 		phasesTable.requestFocus();
 
@@ -2335,7 +2343,7 @@ public class SimView extends JFrame {
 		USSalienceTable.setRowHeight(TABLE_ROW_HEIGHT);
 		USSalienceScroll = new JScrollPane(USSalienceTable);
 
-		USSalienceScroll.setMinimumSize(new Dimension(50,0));
+		USSalienceScroll.setMinimumSize(new Dimension(50,0));//EMP 02/05/2018 from
 	}
 	/**
 	 * Positions the frame into the center of the screen. It uses the
@@ -2366,23 +2374,23 @@ public class SimView extends JFrame {
 	/*
 	 * Creates the bottom panel with the logo
 	 */
-	private JPanel createBottomPanel() {
+		private JPanel createBottomPanel() {
 		JPanel aboutPanel = new JPanel();
-		aboutPanel.setMinimumSize(new Dimension(1000, 58));
+		aboutPanel.setMinimumSize(new Dimension(1000, 62));//EMP test original 1000,58 now 1000,62
 
 		aboutPanel.setBorder(BorderFactory.createLoweredBevelBorder());
 		aboutPanel.setBackground(Color.WHITE);
 		// modified by Alberto Fernandez: 19 July 2011
-		// ImageIcon icon = createImageIcon("/Extras/logo6-final.jpg", "");
+		 ImageIcon icon = createImageIcon("/Extras/logo6-final.jpg", "");
 
-		// ImageIcon icon = createImageIcon("../Extras/logo6-final.png", "");
-		ImageIcon icon = createImageIcon(
-				"/simulator/extras/logo_small.png", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		//ImageIcon icon = createImageIcon("../Extras/logo6-final.png", "");
+		//ImageIcon icon = createImageIcon(
+		//		"/simulator/extras/logo_small.png", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
 		JLabel label = new JLabel(icon);
 		aboutPanel.add(label);
 
-		// aboutPanel.setBorder(new SimBackgroundBorder(icon.getImage(), true));
+		 aboutPanel.setBorder(new SimBackgroundBorder(icon.getImage(), true));
 		return aboutPanel;
 
 	}
@@ -2392,24 +2400,33 @@ public class SimView extends JFrame {
 
 	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 	    g2.drawImage(srcImg, 0, 0, w, h, null);
-	    g2.dispose();
+	   	    g2.dispose();
 
 	    return resizedImg;
 	}
 	
 	private JPanel createBottomRightPanel() {
 		aboutPanel = new JPanel();
-		aboutPanel.setMinimumSize(new Dimension((int)Math.round(this.INITIAL_WIDTH*0.9/2), this.INITIAL_HEIGHT/4));
-		aboutPanel.setSize((int)Math.round(this.INITIAL_WIDTH*0.9/2),this.INITIAL_HEIGHT/4);
+		aboutPanel.setMinimumSize(new Dimension((int)Math.round(this.INITIAL_WIDTH*0.8/2.1), (int)Math.round(this.INITIAL_HEIGHT/5.8)));//EMP 02/05/2018 from aboutPanel.setMinimumSize(new Dimension((int)Math.round(this.INITIAL_WIDTH*0.8/2), (int)Math.round(this.INITIAL_HEIGHT/6)));
+		aboutPanel.setSize((int)Math.round(this.INITIAL_WIDTH*0.8/2.3),(int)Math.round(this.INITIAL_HEIGHT/5.5));//EMP 02/05/2018 from aboutPanel.setSize((int)Math.round(this.INITIAL_WIDTH*0.8/2),(int)Math.round(this.INITIAL_HEIGHT/6))
 		aboutPanel.setBorder(BorderFactory.createLoweredBevelBorder());
-		aboutPanel.setBackground(new Color(255,255,255));//
-		ImageIcon icon = createImageIcon(
-				"/simulator/extras/dd_new.png", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		Image img = getScaledImage(icon.getImage(),(int)Math.round(this.INITIAL_WIDTH/2.15f),(int)Math.round((1.5*this.INITIAL_WIDTH)/2.15f));
-		icon = new ImageIcon(img);
-		JLabel label = new JLabel(icon);
-		aboutPanel.add(label);
-		//aboutPanel.setBorder(new SimBackgroundBorder(icon.getImage(), true));
+		aboutPanel.setBackground(new Color(255,255,255));
+		//EMP 03/05/2018
+		ImageIcon icon = isWindows ? createImageIcon(  //EMP-03/05/2018 isWindows ? 
+				"/simulator/extras/dd_new.png", "") : createImageIcon( //EMP-03/05/2018 :"/simulator/extras/dd_newMAC.png", "");
+						"/simulator/extras/dd_newMAC.png", ""); //$NON-NLS-1$ //$NON-NLS-2$
+
+Image img = getScaledImage(icon.getImage(),(int)Math.round(this.INITIAL_WIDTH/(isWindows ? 2.5f : 3.3f)),(int)Math.round((1*this.INITIAL_WIDTH)/(isWindows ? 1.89f : 2f)));
+icon = new ImageIcon(img);
+//EMP 02/05/2018 above from Image img = getScaledImage(icon.getImage(),(int)Math.round(this.INITIAL_WIDTH/(isWindows ? 2.5f : 2.7f)),(int)Math.round((1.25*this.INITIAL_WIDTH)/(isWindows ? 2.5f : 2.6f))); to --Image img = getScaledImage(icon.getImage(),(int)Math.round(this.INITIAL_WIDTH/(isWindows ? 2.5f : 3.2f)),(int)Math.round((1*this.INITIAL_WIDTH)/(isWindows ? 1.89f : 2.5f)));
+icon = new ImageIcon(img);
+
+JLabel label = new JLabel(icon);
+aboutPanel.add(label);
+label.setBorder( new EmptyBorder(10,5,5,5));// EMP 03/05/2018
+		
+		//aboutPanel.setBorder(new SimBackgroundBorder(icon.getImage(),true));
+		 //EMP 03/05/2018 from		//aboutPanel.setBorder(new SimBackgroundBorder(icon.getImage(), true));
 		return aboutPanel;
 
 	}
@@ -2439,7 +2456,7 @@ public class SimView extends JFrame {
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.CENTER;
-		c.insets = new Insets(5, 5, 5, 5);
+		c.insets = new Insets(5, 5, 5, 5);//EMP 02/05/2018 from new Insets(5, 5, 5, 5)
 
 		// Phases panel
 		JPanel phasePanel = new JPanel();
@@ -2575,7 +2592,7 @@ public class SimView extends JFrame {
 		addOtherValuesTable();
 		runBut = new JButton("RUN"); //$NON-NLS-1$
 		runBut.setActionCommand("run"); //$NON-NLS-1$
-		runBut.setFont(new Font("Serif", Font.BOLD, (int) (Math.round(1.3*TABLE_FONT_SIZE))));
+		runBut.setFont(new Font("Serif", Font.BOLD, (int) (Math.round(1.3*TABLE_FONT_SIZE))));//EMP 02/05/2018 THIS CONTROLS THE LENGTH GUI IN MACfrom (1.3*TABLE_FONT_SIZE))))
 		JPanel runButPanel = new JPanel();
 		
 
@@ -2590,7 +2607,7 @@ public class SimView extends JFrame {
 		con.fill = GridBagConstraints.HORIZONTAL;
 		con.gridx = 0;
 		con.gridy = 0;
-		con.weighty= 0.1;
+		con.weighty= 0.15;
 		con.weightx = 1;
 		con.gridwidth = 1;
 		con.gridheight = 1;
@@ -2599,17 +2616,17 @@ public class SimView extends JFrame {
 		valuesPanel.add(CSValuesScroll,con.clone());
 		con.gridx = 0;
 		con.gridy = 1;
-		con.weighty= 0.1;
+		con.weighty= 0.15;
 		con.weightx = 1;
 		valuesPanel.add(CSVariableScroll,con.clone());
 		con.gridx = 0;
 		con.gridy = 2;
-		con.weighty= 0.1;
+		con.weighty= 0.15;
 		con.weightx = 1;
 		valuesPanel.add(CSSalienceScroll,con.clone());
 		con.gridx = 0;
 		con.gridy = 3;
-		con.weighty= 0.02;
+		con.weighty= 0.05;
 		con.ipady = 55; 
 		con.ipadx = 120;
 		con.weightx = 1;
@@ -2618,7 +2635,7 @@ public class SimView extends JFrame {
 		//otherValuesScroll.setSize(600, 800);
 		con.gridx = 0;
 		con.gridy = 4;
-		con.weighty= 0.02;
+		con.weighty= 0.05;
 		con.weightx = 1;
 		valuesPanel.add(USSalienceScroll,con.clone());
 		con.gridx = 0;
@@ -2626,18 +2643,12 @@ public class SimView extends JFrame {
 		con.weighty= 0.4;
 		con.weightx = 1;
 		con.ipady = 200; 
-		con.ipadx = 120;
+		con.ipadx = isWindows? 120 : 350;
 		valuesPanel.add(otherValuesScroll,con.clone());
-		con.gridx = 0;
-		con.gridy = 6;
-		con.weighty= 0.05;
-		con.weightx = 1;
-		con.ipady = 20; 
-		con.ipadx = 120;
-		intensityButton = new JButton("US Intensity Factor");
-		intensityButton.setActionCommand("intensity");
-		intensityButton.setEnabled(false);
-		valuesPanel.add(intensityButton,con.clone());
+		
+		
+		//"
+		//valuesPanel.add(intensityButton,con.clone());
 		//valuesPanel.add(presenceMeanCheckList);
 		
 		variablePanel.add(varButPanel, BorderLayout.NORTH);
@@ -2670,76 +2681,75 @@ public class SimView extends JFrame {
 		
 		
 		timePredictionCheckList = new JCheckBox("W/Time Graph", false);
-		timePredictionCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		timePredictionCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		timePredictionCheckList.setActionCommand("TrialPrediction");
 		responseCheckList = new JCheckBox("R/Time Graph", false);
 		responseCheckList.setActionCommand("ResponseGraph");
-		responseCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		responseCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		aniCheckList = new JCheckBox("Network Representation",false);
 		aniCheckList.setActionCommand("animationGraph");
-		aniCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		aniCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		contextCheckList = new JCheckBox("Context Graph",false);
 		contextCheckList.setActionCommand("contextGraph");
-		contextCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		contextCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		salienceCheckList = new JCheckBox("Alphas/Trials Graph",false);
 		salienceCheckList.setActionCommand("salienceGraph");
-		salienceCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		salienceCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		vGraphCheckList = new JCheckBox("W/Episodes Graph", false);
 		vGraphCheckList.setActionCommand("vGraph");
-		vGraphCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		vGraphCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 
 		waTimeCheckList = new JCheckBox("V/Time Graph", false);
 		waTimeCheckList.setActionCommand("watGraph");
-		waTimeCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		waTimeCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		waTrialCheckList = new JCheckBox("V/Trial Graph", false);
 		waTrialCheckList.setActionCommand("waTGraph");
-		waTrialCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		waTrialCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		errorTrialCheckList = new JCheckBox("Discrete Error/Trial Graph", false);
 		errorTrialCheckList.setActionCommand("errorTrial");
-		errorTrialCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		errorTrialCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		errorCheckList = new JCheckBox("Discrete Error/Time Graph", false);
 		errorCheckList.setActionCommand("errorGraph");
-		errorCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		errorCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		////
 		//
 		//
 		trialResponseCheckList = new JCheckBox("R/Trials Graph", false);
 		trialResponseCheckList.setActionCommand("trialResponse");
-		trialResponseCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		trialResponseCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		//componentStrengthCheckList = new JCheckBox("componentStrength", false);
 		//componentStrengthCheckList.setActionCommand("TrialPrediction");
 		componentActivationCheckList = new JCheckBox("Element Activation", false);
 		componentActivationCheckList.setActionCommand("componentActivation");
-		componentActivationCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		componentActivationCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		componentPredictionCheckList = new JCheckBox("Element Predictions", false);
 		componentPredictionCheckList.setActionCommand("componentPredictions");
-		componentPredictionCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		componentPredictionCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 
 		componentDeltaCheckList = new JCheckBox("Element Deltas", false);
 		componentDeltaCheckList.setActionCommand("ComponentDelta");
-		componentDeltaCheckList.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		componentDeltaCheckList.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		
 		floatingButtons = new JCheckBox("Checkbox windows", false);
 		floatingButtons.setActionCommand("floatingButtons");
-		floatingButtons.setFont(new Font("Helvetica", Font.PLAIN, 14));
+		floatingButtons.setFont(new Font("Helvetica", Font.PLAIN, 12));
 		
 		
 		dispGraphBut = new JButton(Messages.getString("SimView.graphs")); //$NON-NLS-1$
 		dispGraphBut.setActionCommand("dispGraph"); //$NON-NLS-1$
 		JPanel dispGraphButPanel = new JPanel();
-		dispGraphButPanel.setLayout(new GridLayout(22, 1));
+		dispGraphButPanel.setLayout(new GridLayout(20, 2));
 		runBut.setForeground(new Color(240,0,0));
 		//clearBut.setForeground(new Color(180,0,0));
 		//clearBut.setFont(new Font("Helvetica", Font.ITALIC, 12));
-		dispGraphButPanel.add(dispGraphBut);
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
 		dispGraphButPanel.add(vGraphCheckList);
 		dispGraphButPanel.add(waTrialCheckList);
 		dispGraphButPanel.add(trialResponseCheckList);
-		dispGraphButPanel.add(new JLabel(""));
 		dispGraphButPanel.add(timePredictionCheckList);
 		dispGraphButPanel.add(waTimeCheckList);
 		dispGraphButPanel.add(responseCheckList);
-		dispGraphButPanel.add(new JLabel(""));
 		dispGraphButPanel.add(contextCheckList);
 		dispGraphButPanel.add(salienceCheckList);
 		dispGraphButPanel.add(componentActivationCheckList);
@@ -2748,9 +2758,34 @@ public class SimView extends JFrame {
 		//dispGraphButPanel.add(aniCheckList);
 		dispGraphButPanel.add(errorTrialCheckList);
 		dispGraphButPanel.add(errorCheckList);
-		dispGraphButPanel.add(new JLabel(""));
 		dispGraphButPanel.add(floatingButtons);
 		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		dispGraphButPanel.add(new JLabel(""));
+		if (isWindows) {
+			dispGraphButPanel.add(new JLabel(""));
+			dispGraphButPanel.add(new JLabel(""));
+		}
+		commonButton = new JButton("Pairwise shared elements");
+		commonButton.setActionCommand("commonMap");
+		commonButton.setEnabled(false);
+		dispGraphButPanel.add(dispGraphBut);
+		dispGraphButPanel.add(commonButton);
+		intensityButton = new JButton("US Motivational Factor");
+		intensityButton.setActionCommand("intensity");
+		intensityButton.setEnabled(false);
+		dispGraphButPanel.add(intensityButton);
 		dispGraphButPanel.add(runBut);
 		//dispGraphButPanel.add(clearBut);
 		resultPanel.add(runButPanel, BorderLayout.EAST);
@@ -2776,7 +2811,7 @@ public class SimView extends JFrame {
 		c.gridy = 1;
 		c.gridwidth = 1;
 		c.weighty = 0.3;
-		c.weightx = 0.2;
+		c.weightx = isWindows? 0.25 : 0.25;
 		c.fill = GridBagConstraints.BOTH;
 		
 		mainPanel.add(variablePanel, c.clone());
@@ -3670,6 +3705,8 @@ public class SimView extends JFrame {
 			dispGraphBut.setEnabled(mode);
 		if (b.equals(intensityButton.getActionCommand()))
 			intensityButton.setEnabled(mode);
+		if (b.equals(commonButton.getActionCommand()))
+			commonButton.setEnabled(mode);
 		if (b.equals(timePredictionCheckList.getActionCommand()))
 			timePredictionCheckList.setEnabled(mode);
 		if (b.equals(presenceMeanCheckList.getActionCommand()))
@@ -3762,6 +3799,7 @@ public class SimView extends JFrame {
 		dispGraphBut.setEnabled(!lock);
 
 		intensityButton.setEnabled(!lock);
+		commonButton.setEnabled(!lock);
 		addPhaseBut.setEnabled(!lock);
 		removePhaseBut.setEnabled(!lock);
 		gButton.setEnabled(!lock);
@@ -3828,7 +3866,7 @@ public class SimView extends JFrame {
 		about.getContentPane().add(aboutPanel);
 		about.pack();
 		about.setLocation(this.INITIAL_WIDTH/3, this.INITIAL_HEIGHT/4);
-		about.setSize(icon.getIconWidth(), icon.getIconHeight());
+		about.setSize(icon.getIconWidth()+1, icon.getIconHeight()+39);//EMP-02/05/2018 (icon.getIconWidth(), icon.getIconHeight()) 
 		about.setVisible(true);
 		about.setTitle(Messages.getString("SimView.title"));//E.Mondragon 30 Sept 2011 //$NON-NLS-1$
 		ImageIcon icon2 = createImageIcon("/simulator/extras/icon_32.png", "");//R&W.png", ""); E.Mondragon 30 Sept 2011 //$NON-NLS-1$ //$NON-NLS-2$
@@ -3882,6 +3920,7 @@ public class SimView extends JFrame {
 
 	public void updateModel(SimModel m) {
 		model = m;
+		model.setView(this);
 	}
 	
 	public boolean isUseCompound() {return isSetCompound();}

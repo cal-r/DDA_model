@@ -32,6 +32,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.swing.table.AbstractTableModel;
+
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -130,6 +133,7 @@ public class SimModel implements Runnable {
 	private float bufferSize = 1f;
 	private float associativeDiscount = 0.95f;
 	private TreeMap<String,ArrayList<Float>> intensities;
+	private TreeMap<String,TreeMap<String,Float>> commonMap;
 	private int maxPhase = 1;
 	
 	public float getAssociativeDiscount() {return associativeDiscount;}
@@ -187,6 +191,10 @@ public class SimModel implements Runnable {
 	private float contextSalience;
 	private boolean isErrors;
 	private boolean isErrors2;
+	private ArrayList<String> stimNames;
+	private TreeMap<String,TreeMap<String, Float>> proportions;
+	private ArrayList<String> stimNames2;
+	private SimView view;
     
 
 
@@ -227,6 +235,7 @@ public class SimModel implements Runnable {
         serialResponseWeight = 0.85f;
         responsesPerMinute = 100;
         if (intensities == null) intensities = new TreeMap();
+        if (commonMap == null) commonMap = new TreeMap();
 	}
 
 	/**
@@ -1194,7 +1203,68 @@ public class SimModel implements Runnable {
 		}
 		
 	}
+	public void setView(SimView v) {this.view = v;}
+	public void initializeCommonMap() {
+		if (commonMap.isEmpty()) {
+		float common = 0;
+		AbstractTableModel otm = view.getOtherValuesTableModel();
+		common =  Float.valueOf((String)otm.getValueAt(2, 1));
+		for (SimGroup sg : groups.values()) {
+			stimNames = new ArrayList<String>();
+			commonMap.put(sg.getNameOfGroup(), new TreeMap());
+			for (Stimulus stim : sg.getCuesMap().values()) {
+				if (!stimNames.contains(stim.getName()) && stim.isCommon()) {
+					stimNames.add(stim.getName());
+					commonMap.get(sg.getNameOfGroup()).put(stim.getName(),common);
+				}
+			}
+		}
+		}
+	}
+
+	public void setCommonMap(TreeMap<String,TreeMap<String,Float>> common) {
+		if (common != null) {
+			commonMap = common;
+		}
+		calculateCommonProportions();
+	}
 	
+	public TreeMap<String,TreeMap<String,Float>> getProportions() {return proportions;}
+	
+	public void calculateCommonProportions() {
+		proportions = new TreeMap<String,TreeMap<String,Float>>();
+
+		for (String groupName : groups.keySet()) {
+			proportions.put(groupName, new TreeMap());
+		}
+		for (String groupName : groups.keySet()) {
+			for (String stimName: groups.get(groupName).getCuesMap().keySet()) {
+				float sum = 0;
+				for (String commonName : commonMap.get(groupName).keySet()) {
+					if (commonName.contains(stimName)) {
+						sum += commonMap.get(groupName).get(commonName);
+					}
+				}
+				proportions.get(groupName).put(stimName, sum);
+				
+			}
+		}
+		for (String  groupName: proportions.keySet()) {
+			for (String stimName : proportions.get(groupName).keySet()) {
+				if (proportions.get(groupName).get(stimName) >= 1) {
+					for (String commonName:stimNames) {
+						if (commonName.contains(stimName)) {
+							commonMap.get(groupName).put(commonName, commonMap.get(groupName).get(commonName)/proportions.get(groupName).get(stimName));
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	
+
+	public TreeMap<String,TreeMap<String,Float>> getCommon() {return commonMap;}
 	public TreeMap<String,ArrayList<Float>> getIntensities() {return intensities;}
 	public int getMaxPhase() {return maxPhase;}
 	

@@ -489,6 +489,7 @@ public class Stimulus {
 	public int getLastOnset() {return lastOnset;}
 	
 	public void setDuration(int dur, int onset, int offset,int durationPoint, boolean active, int realTime) {
+		//System.out.println(durationPoint + " " + active + " "  + realTime + " " + onset +" " + offset + " " + getName());
 		iti = currPhase.getCurrentIti();
 		this.durationPoint = durationPoint -1;
 		this.active = active;
