@@ -1,0 +1,1 @@
+To run this simulation HPC is required. Alternatively, a version of the simulator with reduced functionalities (DDA-reduced.jar) can be used. The simulator can be downloaded form https://www.cal-r.org/index.php?id=DDA-reduced.  Nonetheless it also demands a powerfull machine. 
